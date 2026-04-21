@@ -1,1 +1,110 @@
-place
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ashen War</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Creepster&family=Press+Start+2P&display=swap');
+    body { font-family: 'Press Start 2P', system-ui; }
+    .title { font-family: 'Creepster', cursive; }
+  </style>
+</head>
+<body class="bg-[#0a0a0a] text-white min-h-screen">
+
+  <div class="max-w-4xl mx-auto p-4">
+
+    <!-- HEADER -->
+    <div class="text-center mb-8">
+      <div class="text-red-400 text-xs tracking-[4px] mb-1">OATH OF WAR • BROWSER PROTOTYPE</div>
+      <h1 class="title text-7xl text-red-500 tracking-tighter drop-shadow-2xl">ASHEN WAR</h1>
+      <p class="text-gray-400 mt-3">Swear your oath. Crawl the ashes. Loot. Fight. Die gloriously.</p>
+    </div>
+
+    <!-- CLASS SELECTION -->
+    <div id="class-selection" class="bg-zinc-900 border-2 border-red-800 rounded-3xl p-8 text-center">
+      <h2 class="text-3xl mb-8 text-amber-300">CHOOSE YOUR CLASS</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <button onclick="startNewRun('mage')" class="class-btn bg-gradient-to-b from-blue-950 to-blue-800 hover:from-blue-900 hover:to-blue-700 border-2 border-blue-400 rounded-2xl p-8 transition-all active:scale-95">
+          <div class="text-6xl mb-4">🧙</div>
+          <div class="text-2xl font-bold">MAGE</div>
+          <div class="text-blue-300 text-sm">High magic • Glass cannon</div>
+        </button>
+
+        <button onclick="startNewRun('warrior')" class="class-btn bg-gradient-to-b from-red-950 to-red-800 hover:from-red-900 hover:to-red-700 border-2 border-red-400 rounded-2xl p-8 transition-all active:scale-95">
+          <div class="text-6xl mb-4">🛡️</div>
+          <div class="text-2xl font-bold">WARRIOR</div>
+          <div class="text-red-300 text-sm">Tank • Brutal melee</div>
+        </button>
+
+        <button onclick="startNewRun('rogue')" class="class-btn bg-gradient-to-b from-emerald-950 to-emerald-800 hover:from-emerald-900 hover:to-emerald-700 border-2 border-emerald-400 rounded-2xl p-8 transition-all active:scale-95">
+          <div class="text-6xl mb-4">🗡️</div>
+          <div class="text-2xl font-bold">ROGUE</div>
+          <div class="text-emerald-300 text-sm">Fast • Deadly crits</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- GAME UI -->
+    <div id="game-ui" class="hidden">
+
+      <!-- Player Status -->
+      <div class="bg-zinc-900 border border-amber-600 rounded-3xl p-6 mb-6">
+        <div class="flex justify-between items-center">
+          <div>
+            <span id="player-name" class="text-2xl font-bold"></span>
+            <span id="player-class" class="ml-4 text-amber-400 uppercase text-sm tracking-widest"></span>
+          </div>
+          <div class="text-right">
+            <div class="text-xl">Room <span id="player-room" class="font-bold text-red-400"></span></div>
+            <div class="text-amber-300">💰 <span id="player-gold" class="font-bold"></span></div>
+          </div>
+        </div>
+        <div class="mt-4 h-4 bg-zinc-800 rounded-2xl overflow-hidden">
+          <div id="hp-bar" class="h-4 bg-red-600 transition-all"></div>
+        </div>
+        <div class="flex justify-between text-xs mt-1 font-mono">
+          <span>HP</span>
+          <span id="player-hp"></span>
+        </div>
+      </div>
+
+      <!-- Enemy -->
+      <div id="enemy-section" class="hidden bg-red-950 border border-red-700 rounded-3xl p-6 mb-6">
+        <div class="flex justify-between">
+          <div id="enemy-name" class="text-red-400 text-2xl font-bold"></div>
+          <div id="enemy-hp" class="font-mono text-red-300"></div>
+        </div>
+        <button onclick="fight()" id="fight-btn"
+                class="w-full mt-8 bg-red-600 hover:bg-red-700 py-8 text-3xl font-bold rounded-3xl transition-all active:scale-95">
+          ⚔️ ATTACK
+        </button>
+      </div>
+
+      <!-- Battle Log -->
+      <div id="battle-log" class="bg-black border border-zinc-700 rounded-3xl p-6 h-64 overflow-y-auto text-sm font-mono mb-6"></div>
+
+      <!-- Reward -->
+      <div id="reward-section" class="hidden bg-emerald-950 border border-emerald-700 rounded-3xl p-6 mb-6">
+        <h3 class="text-emerald-300 text-xl mb-6 text-center">CHOOSE YOUR LOOT</h3>
+        <div id="reward-options" class="space-y-3"></div>
+      </div>
+
+      <!-- Run Over -->
+      <div id="run-over-section" class="hidden text-center bg-zinc-900 border border-red-800 rounded-3xl p-10">
+        <h2 class="text-4xl text-red-500 mb-6">YOUR RUN HAS ENDED</h2>
+        <button onclick="submitToLeaderboard()" 
+                class="bg-red-600 hover:bg-red-700 px-16 py-8 text-3xl rounded-3xl mb-6 transition-all">
+          🏆 SUBMIT TO LEADERBOARD
+        </button>
+        <button onclick="resetRun()" class="text-gray-400 underline">Start New Run</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
