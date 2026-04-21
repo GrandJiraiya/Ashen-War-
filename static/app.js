@@ -7,7 +7,7 @@ function getPlayerName() {
   const urlParams = new URLSearchParams(window.location.search);
   let player = urlParams.get('player') || localStorage.getItem('player_name');
   if (!player) {
-    player = prompt("Enter your player name (letters, numbers, underscore only):", "CrashOutCrypto");
+    player = prompt("Who is playing, YO?(letters, numbers, underscore only):", "Crash");
   }
   // Sanitize to only safe characters
   currentPlayerName = player.trim().replace(/[^a-zA-Z0-9_]/g, '_');
