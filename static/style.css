@@ -1,1 +1,62 @@
-#place
+/* ============================================= */
+/* ASHEn WAR - Custom Styles                     */
+/* ============================================= */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: linear-gradient(#0a0a0a, #1a0a0a);
+  color: #f1f1f1;
+}
+
+.title {
+  text-shadow: 
+    0 0 10px #9f1239,
+    0 0 20px #9f1239;
+}
+
+.class-btn {
+  transition: all 0.2s ease;
+}
+
+.class-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px -5px rgb(159 18 57);
+}
+
+#fight-btn {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Battle log */
+#battle-log {
+  scrollbar-width: thin;
+  scrollbar-color: #9f1239 #27272a;
+}
+
+#battle-log::-webkit-scrollbar {
+  height: 6px;
+}
+
+#battle-log::-webkit-scrollbar-thumb {
+  background: #9f1239;
+  border-radius: 20px;
+}
+
+/* HP Bar */
+#hp-bar {
+  transition: width 0.4s ease, background-color 0.3s ease;
+}
+
+/* Screen transition */
+#class-selection,
+#game-ui {
+  transition: all 0.3s ease;
+}
