@@ -1,4 +1,4 @@
-// ============== ASHEn WAR - FIXED app.js ==============
+// ============== ASHEn WAR - FIXED app.js (player_name safe) ==============
 
 let currentPlayerName = null;
 
@@ -6,26 +6,24 @@ function getPlayerName() {
   if (currentPlayerName) return currentPlayerName;
   const urlParams = new URLSearchParams(window.location.search);
   let player = urlParams.get('player') || localStorage.getItem('player_name');
-  if (!player) player = prompt("Enter your player name:", "CrashOutCrypto");
-  currentPlayerName = player.trim();
+  if (!player) {
+    player = prompt("Enter your player name (letters, numbers, underscore only):", "CrashOutCrypto");
+  }
+  // Sanitize to only safe characters
+  currentPlayerName = player.trim().replace(/[^a-zA-Z0-9_]/g, '_');
   localStorage.setItem('player_name', currentPlayerName);
   return currentPlayerName;
 }
 
 async function api(endpoint, method = "GET", body = null) {
   const playerName = getPlayerName();
-  let url = endpoint;
+  let url = endpoint + (endpoint.includes("?") ? "&" : "?") + "player_name=" + encodeURIComponent(playerName);
 
-  const options = { method, headers: {} };
-
-  if (body) {
-    // POST requests: add player_name into the JSON body
-    options.headers["Content-Type"] = "application/json";
-    options.body = JSON.stringify({ ...body, player_name: playerName });
-  } else if (method === "GET") {
-    // GET requests: add as query param
-    url += (url.includes("?") ? "&" : "?") + "player_name=" + encodeURIComponent(playerName);
-  }
+  const options = {
+    method: method,
+    headers: body ? { "Content-Type": "application/json" } : {}
+  };
+  if (body) options.body = JSON.stringify({ ...body, player_name: playerName });
 
   const res = await fetch(url, options);
   const data = await res.json();
