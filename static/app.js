@@ -1,15 +1,12 @@
-// ============== ASHEn WAR - FULL FRONTEND (static/app.js) ==============
+// ============== ASHEn WAR - FIXED app.js ==============
 
 let currentPlayerName = null;
-let currentState = null;
 
 function getPlayerName() {
   if (currentPlayerName) return currentPlayerName;
   const urlParams = new URLSearchParams(window.location.search);
   let player = urlParams.get('player') || localStorage.getItem('player_name');
-  if (!player) {
-    player = prompt("Enter your player name:", "CrashOutCrypto");
-  }
+  if (!player) player = prompt("Enter your player name:", "CrashOutCrypto");
   currentPlayerName = player.trim();
   localStorage.setItem('player_name', currentPlayerName);
   return currentPlayerName;
@@ -17,34 +14,34 @@ function getPlayerName() {
 
 async function api(endpoint, method = "GET", body = null) {
   const playerName = getPlayerName();
-  let url = endpoint + (endpoint.includes("?") ? "&" : "?") + "player_name=" + encodeURIComponent(playerName);
+  let url = endpoint;
 
-  const options = {
-    method: method,
-    headers: body ? { "Content-Type": "application/json" } : {}
-  };
-  if (body) options.body = JSON.stringify(body);
+  const options = { method, headers: {} };
+
+  if (body) {
+    // POST requests: add player_name into the JSON body
+    options.headers["Content-Type"] = "application/json";
+    options.body = JSON.stringify({ ...body, player_name: playerName });
+  } else if (method === "GET") {
+    // GET requests: add as query param
+    url += (url.includes("?") ? "&" : "?") + "player_name=" + encodeURIComponent(playerName);
+  }
 
   const res = await fetch(url, options);
   const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error(data.error || "Server error");
-  }
+  if (!res.ok) throw new Error(data.error || "Server error");
   return data;
 }
 
 function renderState(state) {
-  currentState = state;
   const hasRun = !!state.has_run;
 
-  // Switch screens
   document.getElementById("class-selection").style.display = hasRun ? "none" : "block";
   document.getElementById("game-ui").classList.toggle("hidden", !hasRun);
 
   if (!hasRun) return;
 
-  // Player stats
   const p = state.player || {};
   document.getElementById("player-name").textContent = p.name || getPlayerName();
   document.getElementById("player-class").textContent = (p.class || "").toUpperCase();
@@ -52,11 +49,9 @@ function renderState(state) {
   document.getElementById("player-gold").textContent = p.gold || 0;
   document.getElementById("player-room").textContent = state.room || 0;
 
-  // HP bar
   const hpPercent = Math.max(0, Math.min(100, ((p.hp || 0) / (p.max_hp || 100)) * 100));
   document.getElementById("hp-bar").style.width = hpPercent + "%";
 
-  // Enemy
   const enemySec = document.getElementById("enemy-section");
   if (state.enemy) {
     enemySec.classList.remove("hidden");
@@ -66,11 +61,9 @@ function renderState(state) {
     enemySec.classList.add("hidden");
   }
 
-  // Battle log
   const logEl = document.getElementById("battle-log");
   logEl.innerHTML = (state.battle_log || []).map(l => `<div class="mb-1">${l}</div>`).join("");
 
-  // Reward
   const rewardSec = document.getElementById("reward-section");
   if (state.reward_pending && state.last_reward) {
     rewardSec.classList.remove("hidden");
@@ -83,7 +76,6 @@ function renderState(state) {
     rewardSec.classList.add("hidden");
   }
 
-  // Run over
   document.getElementById("run-over-section").classList.toggle("hidden", !state.run_over);
 }
 
@@ -116,7 +108,7 @@ async function resetRun() {
 
 async function submitToLeaderboard() {
   try {
-    const data = await api("/api/run/submit", "POST", {});
+    await api("/api/run/submit", "POST", {});
     alert("Run submitted to leaderboard!");
   } catch (e) {
     alert(e.message);
