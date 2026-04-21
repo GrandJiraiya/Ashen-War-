@@ -25,3 +25,12 @@ Swear your oath. Crawl the ashen ruins. Loot legendary gear. Fight bosses every 
 ```bash
 pip install -r requirements.txt
 python app.py
+
+## Troubleshooting
+
+If tapping a class gives an error like `The string did not match the expected pattern`, check these first:
+
+- `SUPABASE_URL` must be the project API URL: `https://<project-ref>.supabase.co`
+- Do **not** use the dashboard URL: `https://supabase.com/dashboard/project/<project-ref>`
+- Set one of: `SUPABASE_KEY`, `SUPABASE_ANON_KEY`, or `SUPABASE_PUBLISHABLE_KEY`
+- Make sure `save_slots.player_name` is unique if you are using `upsert(..., on_conflict="player_name")`
