@@ -16,7 +16,7 @@ from supabase_client import get_supabase
 
 load_dotenv()
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-change-me")
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "420b420bud6689bir547sd75368bbghhf64327")
 
 
 def utc_now_iso() -> str:
