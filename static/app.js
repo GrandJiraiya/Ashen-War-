@@ -1,4 +1,4 @@
-// ============== ASHEn WAR - BULLETPROOF app.js ==============
+// ============== ASHEn WAR - FINAL FIXED app.js ==============
 
 let currentPlayerName = null;
 
@@ -14,22 +14,23 @@ function getPlayerName() {
 
 async function api(endpoint, method = "GET", body = null) {
   const playerName = getPlayerName();
+  let url = endpoint;
+
   const options = { method, headers: {} };
 
   if (body) {
+    // POST: add player_name inside the JSON body
     options.headers["Content-Type"] = "application/json";
     options.body = JSON.stringify({ ...body, player_name: playerName });
   } else if (method === "GET") {
-    endpoint += (endpoint.includes("?") ? "&" : "?") + "player_name=" + encodeURIComponent(playerName);
+    // GET: add as query parameter
+    url += (url.includes("?") ? "&" : "?") + "player_name=" + encodeURIComponent(playerName);
   }
 
-  const res = await fetch(endpoint, options);
+  const res = await fetch(url, options);
   const data = await res.json();
 
-  if (!res.ok) {
-    alert("API ERROR: " + (data.error || "Unknown error"));
-    throw new Error(data.error);
-  }
+  if (!res.ok) throw new Error(data.error || "Server error");
   return data;
 }
 
