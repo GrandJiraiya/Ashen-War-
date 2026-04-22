@@ -69,6 +69,7 @@ class Player:
 class Enemy:
     name: str
     hp: int
+    max_hp: int
     attack: int
     defense: int
     crit: float
@@ -81,4 +82,12 @@ class Enemy:
     def from_dict(cls, data: Optional[dict]) -> Optional["Enemy"]:
         if not data:
             return None
-        return cls(**data)
+        return cls(
+            name=data["name"],
+            hp=data["hp"],
+            max_hp=data.get("max_hp", data["hp"]),
+            attack=data["attack"],
+            defense=data["defense"],
+            crit=data["crit"],
+            is_boss=data.get("is_boss", False),
+        )

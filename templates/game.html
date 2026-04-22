@@ -77,10 +77,28 @@
           <div id="enemy-name" class="text-red-400 text-2xl font-bold"></div>
           <div id="enemy-hp" class="font-mono text-red-300"></div>
         </div>
-        <button onclick="fight()" id="fight-btn"
-                class="w-full mt-8 bg-red-600 hover:bg-red-700 py-8 text-3xl font-bold rounded-3xl transition-all active:scale-95">
-          ⚔️ ATTACK
-        </button>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-8">
+          <button onclick="fight('attack')" id="fight-btn"
+                  class="bg-red-600 hover:bg-red-700 py-5 text-xl font-bold rounded-2xl transition-all active:scale-95">
+            ⚔️ ATTACK
+          </button>
+          <button onclick="fight('spell')"
+                  class="bg-indigo-700 hover:bg-indigo-600 py-5 text-xl font-bold rounded-2xl transition-all active:scale-95">
+            ✨ SPELL
+          </button>
+          <button onclick="fight('potion')"
+                  class="bg-emerald-700 hover:bg-emerald-600 py-5 text-xl font-bold rounded-2xl transition-all active:scale-95">
+            🧪 POTION
+          </button>
+        </div>
+      </div>
+
+      <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-4 mb-6">
+        <div class="text-sm text-zinc-300 mb-3">Merchant</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <button onclick="shopAction('buy_potion')" class="bg-amber-700 hover:bg-amber-600 py-3 rounded-2xl">Buy Potion (25g)</button>
+          <button onclick="shopAction('buy_gear')" class="bg-purple-700 hover:bg-purple-600 py-3 rounded-2xl">Roll Gear (60g)</button>
+        </div>
       </div>
 
       <!-- Battle Log -->
