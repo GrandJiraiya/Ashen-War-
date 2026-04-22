@@ -68,23 +68,25 @@ def set_enemy(state: dict, enemy: Optional[Enemy]) -> None:
 # ---------- generators ----------
 
 def make_enemy(room: int) -> Enemy:
-    is_boss = room % 5 == 0
-    if is_boss:
+    if room % 5 == 0:
+        hp = 55 + room * 16
         return Enemy(
             name=RNG.choice(BOSS_NAMES),
-            hp=55 + room * 16,
+            hp=hp,
+            max_hp=hp,
             attack=9 + room * 2,
             defense=3 + room // 3,
             crit=0.12,
             is_boss=True,
         )
+    hp = 24 + room * 8 + RNG.randint(-4, 6)
     return Enemy(
         name=f"{RNG.choice(ENEMY_PREFIX)} {RNG.choice(ENEMY_SUFFIX)}",
-        hp=24 + room * 8 + RNG.randint(-4, 6),
+        hp=hp,
+        max_hp=hp,
         attack=5 + room * 2 + RNG.randint(0, 2),
         defense=max(0, 1 + room // 4),
         crit=0.06 + min(0.10, room * 0.002),
-        is_boss=False,
     )
 
 
@@ -373,24 +375,42 @@ def shop_action(state: dict, action: str) -> dict:
 
 
 def state_for_client(state: Optional[dict]) -> dict:
-    """Convert internal game state into exactly what the frontend (app.js) expects"""
     if not state:
-        return {
-            "has_run": False,
-            "classes": CLASS_DATA,
-        }
+        return {"has_run": False, "classes": CLASS_DATA}
 
     player = get_player(state)
+    enemy = get_enemy(state)
+
+    reward_options = None
+    gear_offer = None
+
+    if state.get("status") == "reward" and state.get("reward_pending"):
+        reward_options = [
+            {"id": "potion", "label": "+1 Potion"},
+            {"id": "heal", "label": "Recover 35% HP"},
+            {"id": "mana", "label": "+20 Mana"},
+            {"id": "loot", "label": "Roll Gear"},
+        ]
+
+    if state.get("status") == "gear" and state.get("last_reward"):
+        gear_offer = state["last_reward"]
+
     return {
         "has_run": True,
-        "player": player.to_dict(),
-        "enemy": state.get("enemy"),
         "status": state.get("status", "ready"),
+        "run_over": state.get("run_over", False),
         "battle_log": state.get("battle_log", []),
         "reward_pending": state.get("reward_pending", False),
-        "last_reward": state.get("last_reward"),
+        "reward_options": reward_options,
+        "gear_offer": gear_offer,
         "merchant_quote": state.get("merchant_quote"),
-        "run_over": state.get("run_over", False),
-        "classes": CLASS_DATA,  # still needed for class picker on first load
+        "room": player.room,
+        "player": {
+            **player.to_dict(),
+            "class": player.hero_class,
+            "display_class": player.class_label,
+            "max_hp": player.total_max_hp(),
+        },
+        "enemy": None if not enemy else enemy.to_dict(),
+        "classes": CLASS_DATA,
     }
-    

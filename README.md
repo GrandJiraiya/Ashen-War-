@@ -34,3 +34,8 @@ If tapping a class gives an error like `The string did not match the expected pa
 - Do **not** use the dashboard URL: `https://supabase.com/dashboard/project/<project-ref>`
 - Set one of: `SUPABASE_KEY`, `SUPABASE_ANON_KEY`, or `SUPABASE_PUBLISHABLE_KEY`
 - Make sure `save_slots.player_name` is unique if you are using `upsert(..., on_conflict="player_name")`
+
+
+## Environment
+
+Copy `.env.example` to `.env` and provide your Supabase credentials before running locally.
