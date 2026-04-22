@@ -4,11 +4,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-_supabase: Client | None = None
+supabase: Client | None = None
 
 def get_supabase() -> Client:
-    global _supabase
-    if _supabase is None:
+    global supabase
+    if supabase is None:
         url = os.getenv("SUPABASE_URL")
         key = os.getenv("SUPABASE_KEY")
         
@@ -23,5 +23,5 @@ def get_supabase() -> Client:
         if not url or not key:
             raise ValueError(f"Missing Supabase env vars. URL={bool(url)}, KEY={bool(key)}")
         
-        _supabase = create_client(url, key)
-    return _supabase
+        supabase = create_client(url, key)
+    return supabase
