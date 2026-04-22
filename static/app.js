@@ -1,4 +1,4 @@
-// ============== ASHEn WAR - FIXED app.js (player_name safe) ==============
+// ============== ASHEn WAR - BULLETPROOF app.js ==============
 
 let currentPlayerName = null;
 
@@ -6,31 +6,35 @@ function getPlayerName() {
   if (currentPlayerName) return currentPlayerName;
   const urlParams = new URLSearchParams(window.location.search);
   let player = urlParams.get('player') || localStorage.getItem('player_name');
-  if (!player) {
-    player = prompt("Who is playing, YO?(letters, numbers, underscore only):", "Crash");
-  }
+  if (!player) player = prompt("Enter your player name:", "CrashOutCrypto");
+  currentPlayerName = player.trim().replace(/[^a-zA-Z0-9_]/g, '_');
+  localStorage.setItem('player_name', currentPlayerName);
+  return currentPlayerName;
 }
 
 async function api(endpoint, method = "GET", body = null) {
   const playerName = getPlayerName();
-  let url = endpoint + (endpoint.includes("?") ? "&" : "?") + "player_name=" + encodeURIComponent(playerName);
+  const options = { method, headers: {} };
 
-  const options = {
-    method: method,
-    headers: body ? { "Content-Type": "application/json" } : {}
-  };
-  if (body) options.body = JSON.stringify({ ...body, player_name: playerName });
+  if (body) {
+    options.headers["Content-Type"] = "application/json";
+    options.body = JSON.stringify({ ...body, player_name: playerName });
+  } else if (method === "GET") {
+    endpoint += (endpoint.includes("?") ? "&" : "?") + "player_name=" + encodeURIComponent(playerName);
+  }
 
-  const res = await fetch(url, options);
+  const res = await fetch(endpoint, options);
   const data = await res.json();
 
-  if (!res.ok) throw new Error(data.error || "Server error");
+  if (!res.ok) {
+    alert("API ERROR: " + (data.error || "Unknown error"));
+    throw new Error(data.error);
+  }
   return data;
 }
 
 function renderState(state) {
   const hasRun = !!state.has_run;
-
   document.getElementById("class-selection").style.display = hasRun ? "none" : "block";
   document.getElementById("game-ui").classList.toggle("hidden", !hasRun);
 
@@ -56,7 +60,7 @@ function renderState(state) {
   }
 
   const logEl = document.getElementById("battle-log");
-  logEl.innerHTML = (state.battle_log || []).map(l => `<div class="mb-1">${l}</div>`).join("");
+  logEl.innerHTML = (state.battle_log || []).map(l => `<div>${l}</div>`).join("");
 
   const rewardSec = document.getElementById("reward-section");
   if (state.reward_pending && state.last_reward) {
