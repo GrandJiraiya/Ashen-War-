@@ -9,10 +9,6 @@ function getPlayerName() {
   if (!player) {
     player = prompt("Who is playing, YO?(letters, numbers, underscore only):", "Crash");
   }
-  // Sanitize to only safe characters
-  currentPlayerName = player.trim().replace(/[^a-zA-Z0-9_]/g, '_');
-  localStorage.setItem('player_name', currentPlayerName);
-  return currentPlayerName;
 }
 
 async function api(endpoint, method = "GET", body = null) {
